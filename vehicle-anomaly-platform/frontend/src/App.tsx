@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Telemetry, Alert } from './types';
+import type { Telemetry, Alert } from './types';
 import { Activity, Car, AlertTriangle, ShieldCheck, Zap } from 'lucide-react';
 import './index.css';
 
