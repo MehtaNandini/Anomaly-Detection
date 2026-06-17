@@ -4,7 +4,9 @@ import { Activity, Car, AlertTriangle, ShieldCheck, Zap } from 'lucide-react';
 import './index.css';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-const WS_URL = API_BASE.replace('http', 'ws') + '/ws/live';
+const WS_URL = API_BASE.startsWith('http') 
+  ? API_BASE.replace('http', 'ws') + '/ws/live'
+  : `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}${API_BASE}/ws/live`;
 
 function App() {
   const [telemetry, setTelemetry] = useState<Telemetry[]>([]);
