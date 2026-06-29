@@ -85,7 +85,7 @@ export default function Dashboard() {
               <tbody>
                 {telemetry.slice(0, 15).map((row) => (
                   <tr key={row.id}>
-                    <td className="data-mono text-muted">{new Date(row.created_at).toLocaleTimeString()}</td>
+                    <td className="data-mono text-muted">{new Date(row.created_at.replace('Z', '') + 'Z').toLocaleTimeString()}</td>
                     <td className="data-mono highlight">{row.vehicle_id}</td>
                     <td><span className={`status-badge ${getSeverityBadge(row.severity)}`}>{row.severity}</span></td>
                     <td className="data-mono">{row.speed}</td>
@@ -105,14 +105,14 @@ export default function Dashboard() {
           <h3>Recent Anomalies</h3>
           <div className="alert-list">
             {alerts.slice(0, 5).map(alert => (
-              <div key={alert.id} className="alert-item">
+              <Link to={`/vehicle/${alert.vehicle_id}`} key={alert.id} className="alert-item" style={{ textDecoration: 'none', display: 'block', transition: 'all 0.2s' }}>
                 <div className="alert-header">
                   <span className="data-mono highlight">{alert.vehicle_id}</span>
                   <span className={`status-badge ${getSeverityBadge(alert.severity)}`}>{alert.severity}</span>
                 </div>
-                <div className="alert-fault">{alert.fault_type}</div>
-                <div className="data-mono text-muted text-sm">{new Date(alert.created_at).toLocaleTimeString()}</div>
-              </div>
+                <div className="alert-fault" style={{ color: 'var(--text)' }}>{alert.fault_type}</div>
+                <div className="data-mono text-muted text-sm">{new Date(alert.created_at.replace('Z', '') + 'Z').toLocaleTimeString()}</div>
+              </Link>
             ))}
             {alerts.length === 0 && <div className="text-muted p-4">No recent anomalies.</div>}
             {alerts.length > 0 && (

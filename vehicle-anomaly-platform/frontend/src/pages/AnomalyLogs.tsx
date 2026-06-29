@@ -1,9 +1,25 @@
+import { useEffect } from 'react';
 import { useTelemetry } from '../context/TelemetryContext';
-import { ShieldAlert, Cpu } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ShieldAlert, Cpu, ExternalLink } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function AnomalyLogs() {
   const { alerts } = useTelemetry();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (alerts.length > 0 && location.hash) {
+      const id = location.hash.substring(1);
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.5)';
+          setTimeout(() => el.style.boxShadow = '', 3000);
+        }
+      }, 100);
+    }
+  }, [alerts, location.hash]);
 
   const getSeverityBadge = (severity: string) => {
     const s = severity.toLowerCase();
@@ -33,14 +49,19 @@ export default function AnomalyLogs() {
         ) : (
           <div className="logs-feed">
             {alerts.map((alert) => (
-              <div key={alert.id} className={`log-card ${alert.severity === 'High' ? 'critical-border' : 'warning-border'}`}>
+              <div key={alert.id} id={`alert-${alert.id}`} className={`log-card ${alert.severity === 'High' ? 'critical-border' : 'warning-border'}`} style={{ transition: 'box-shadow 0.5s ease' }}>
                 <div className="log-header">
                   <div className="log-title">
                     <Link to={`/vehicle/${alert.vehicle_id}`} className="data-mono highlight hover-link">{alert.vehicle_id}</Link>
                     <span className="text-muted">•</span>
-                    <span className="data-mono text-muted">{new Date(alert.created_at).toLocaleTimeString()}</span>
+                    <span className="data-mono text-muted">{new Date(alert.created_at.replace('Z', '') + 'Z').toLocaleTimeString()}</span>
                   </div>
-                  <span className={`status-badge ${getSeverityBadge(alert.severity)}`}>{alert.severity}</span>
+                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <Link to={`/history#log-${alert.id}`} className="hover-link" style={{ fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '4px' }} title="View in Global Telemetry History">
+                      <ExternalLink size={14} /> View History
+                    </Link>
+                    <span className={`status-badge ${getSeverityBadge(alert.severity)}`}>{alert.severity}</span>
+                  </div>
                 </div>
                 
                 <div className="log-fault">

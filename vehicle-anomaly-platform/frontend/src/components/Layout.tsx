@@ -1,6 +1,6 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { useTelemetry } from '../context/TelemetryContext';
-import { Activity, LayoutDashboard, ShieldAlert, CarFront } from 'lucide-react';
+import { Activity, LayoutDashboard, CarFront, Database, AlertTriangle } from 'lucide-react';
 
 export default function Layout() {
   const { isConnected } = useTelemetry();
@@ -23,12 +23,14 @@ export default function Layout() {
             <span>Dashboard</span>
           </NavLink>
           
-          <NavLink 
-            to="/anomalies" 
-            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-          >
-            <ShieldAlert size={20} />
+          <NavLink to="/anomalies" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>
+            <AlertTriangle size={18} />
             <span>Anomaly Logs</span>
+          </NavLink>
+          
+          <NavLink to="/history" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>
+            <Database size={18} />
+            <span>History Logs</span>
           </NavLink>
           
           <NavLink 
