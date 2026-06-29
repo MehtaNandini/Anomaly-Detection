@@ -23,7 +23,7 @@ export const TelemetryProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // Initial fetch
-    fetch(`${API_BASE}/telemetry/latest`)
+    fetch(`${API_BASE}/telemetry/history`)
       .then((res) => res.json())
       .then(setTelemetry)
       .catch(console.error);
@@ -47,7 +47,7 @@ export const TelemetryProvider = ({ children }: { children: ReactNode }) => {
       ws.onmessage = (event) => {
         const data: Telemetry = JSON.parse(event.data);
         
-        setTelemetry((prev) => [data, ...prev].slice(0, 100));
+        setTelemetry((prev) => [data, ...prev].slice(0, 1000));
         
         if (data.is_anomaly) {
           const newAlert: Alert = {
@@ -58,7 +58,7 @@ export const TelemetryProvider = ({ children }: { children: ReactNode }) => {
             created_at: data.created_at,
             ai_explanation: data.ai_explanation
           };
-          setAlerts((prev) => [newAlert, ...prev].slice(0, 50));
+          setAlerts((prev) => [newAlert, ...prev].slice(0, 500));
         }
 
         setVehicles((prev) => prev.includes(data.vehicle_id) ? prev : [...prev, data.vehicle_id]);

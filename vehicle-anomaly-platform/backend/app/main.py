@@ -58,13 +58,17 @@ async def create_telemetry(telemetry: schemas.TelemetryCreate, db: Session = Dep
 def read_latest_telemetry(db: Session = Depends(database.get_db)):
     return db.query(models.Telemetry).order_by(desc(models.Telemetry.created_at)).limit(20).all()
 
+@app.get("/telemetry/history", response_model=List[schemas.TelemetryResponse])
+def read_telemetry_history(db: Session = Depends(database.get_db)):
+    return db.query(models.Telemetry).order_by(desc(models.Telemetry.created_at)).limit(1000).all()
+
 @app.get("/telemetry/{vehicle_id}", response_model=List[schemas.TelemetryResponse])
 def read_vehicle_telemetry(vehicle_id: str, db: Session = Depends(database.get_db)):
     return db.query(models.Telemetry).filter(models.Telemetry.vehicle_id == vehicle_id).order_by(desc(models.Telemetry.created_at)).limit(100).all()
 
 @app.get("/alerts", response_model=List[schemas.AlertResponse])
 def read_alerts(db: Session = Depends(database.get_db)):
-    return db.query(models.Telemetry).filter(models.Telemetry.is_anomaly == True).order_by(desc(models.Telemetry.created_at)).limit(50).all()
+    return db.query(models.Telemetry).filter(models.Telemetry.is_anomaly == True).order_by(desc(models.Telemetry.created_at)).limit(500).all()
 
 @app.get("/vehicles")
 def read_vehicles(db: Session = Depends(database.get_db)):
