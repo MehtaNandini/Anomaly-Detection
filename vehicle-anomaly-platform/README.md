@@ -108,3 +108,4 @@ To deploy this on DigitalOcean:
 
 ## Live Demo
 [http://159.223.25.120](http://159.223.25.120)
+run on local machine: http://localhost
