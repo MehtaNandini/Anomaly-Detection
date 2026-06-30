@@ -11,8 +11,23 @@ interface TelemetryContextType {
 
 const TelemetryContext = createContext<TelemetryContextType | undefined>(undefined);
 
-const API_BASE = `${window.location.protocol}//${window.location.hostname}:8000`;
-const WS_URL = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.hostname}:8000/ws/live`;
+const getApiBase = () => {
+  if (import.meta.env.DEV) {
+    return import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+  }
+  return '/api';
+};
+
+const getWsUrl = () => {
+  if (import.meta.env.DEV) {
+    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+    return apiBase.replace(/^http/, 'ws') + '/ws/live';
+  }
+  return `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/live`;
+};
+
+const API_BASE = getApiBase();
+const WS_URL = getWsUrl();
 
 export const TelemetryProvider = ({ children }: { children: ReactNode }) => {
   const [telemetry, setTelemetry] = useState<Telemetry[]>([]);
