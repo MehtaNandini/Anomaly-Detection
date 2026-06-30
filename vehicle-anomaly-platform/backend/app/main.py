@@ -7,7 +7,18 @@ from . import models, schemas, database, anomaly, ai_service
 from .websocket_manager import manager
 from fastapi.middleware.cors import CORSMiddleware
 
-models.Base.metadata.create_all(bind=database.engine)
+import time
+from sqlalchemy.exc import OperationalError
+
+# Retry database connection on startup
+for _ in range(10):
+    try:
+        models.Base.metadata.create_all(bind=database.engine)
+        print("Database connected successfully.")
+        break
+    except OperationalError as e:
+        print(f"Database not ready yet, retrying in 3 seconds... ({e})")
+        time.sleep(3)
 
 app = FastAPI(title="Vehicle Fault & Emission Anomaly Detection API")
 
