@@ -34,6 +34,16 @@ app.add_middleware(
 def read_root():
     return {"message": "Vehicle Fault & Emission Anomaly Detection API is running"}
 
+@app.get("/test-db")
+def test_db(db: Session = Depends(database.get_db)):
+    try:
+        from sqlalchemy import text
+        result = db.execute(text("SELECT 1")).fetchone()
+        return {"status": "success", "result": result[0]}
+    except Exception as e:
+        import traceback
+        return {"status": "error", "message": str(e), "traceback": traceback.format_exc()}
+
 @app.post("/telemetry", response_model=schemas.TelemetryResponse)
 async def create_telemetry(telemetry: schemas.TelemetryCreate, db: Session = Depends(database.get_db)):
     data_dict = telemetry.model_dump()
